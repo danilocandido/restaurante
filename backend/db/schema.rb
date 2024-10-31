@@ -15,7 +15,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_194130) do
   enable_extension "plpgsql"
 
   create_table "orders", force: :cascade do |t|
-    t.integer "status", null: false
+    t.integer "status", default: 0, null: false
     t.bigint "table_id", null: false
     t.bigint "product_id", null: false
     t.datetime "created_at", null: false
@@ -38,6 +38,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_194130) do
     t.string "number", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["number"], name: "index_tables_on_number", unique: true
   end
 
   add_foreign_key "orders", "products"
