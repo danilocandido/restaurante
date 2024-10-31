@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   scope :api do
+    resources :orders
+    resources :tables
     resources :products
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
