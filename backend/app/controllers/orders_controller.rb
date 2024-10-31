@@ -15,7 +15,8 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    @order = Order.new(order_params)
+    @order = Order.new(table_id: order_params[:table_id])
+    @order.items.build(order_params[:items])
 
     if @order.save
       render json: @order, status: :created, location: @order
@@ -39,13 +40,12 @@ class OrdersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_order
-      @order = Order.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def order_params
-      params.require(:order).permit(:table_id, :product_id)
-    end
+  def set_order
+    @order = Order.find(params[:id])
+  end
+
+  def order_params
+    params.require(:order).permit(:table_id, :items => %i[product_id amount])
+  end
 end

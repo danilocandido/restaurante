@@ -10,17 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_31_194130) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_31_210359) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "items", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_items_on_order_id"
+    t.index ["product_id"], name: "index_items_on_product_id"
+  end
 
   create_table "orders", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.bigint "table_id", null: false
-    t.bigint "product_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_orders_on_product_id"
     t.index ["status"], name: "index_orders_on_status"
     t.index ["table_id"], name: "index_orders_on_table_id"
   end
@@ -41,6 +49,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_194130) do
     t.index ["number"], name: "index_tables_on_number", unique: true
   end
 
-  add_foreign_key "orders", "products"
+  add_foreign_key "items", "orders"
+  add_foreign_key "items", "products"
   add_foreign_key "orders", "tables"
 end

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :items
   scope :api do
     resources :orders
     resources :tables

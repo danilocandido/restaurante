@@ -91,4 +91,9 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  # https://stackoverflow.com/questions/598933/how-do-i-change-the-default-www-example-com-domain-for-testing-in-rails
+  config.before(:each, type: :request) do
+    host! "localhost"
+  end
 end
