@@ -20,12 +20,10 @@ class KitchenWorker
              :timeout_job_after => 1
 
   def work(message)
-    puts "KitchenWorker #{message}"
     payload = JSON.parse(message)
     order = Order.find(payload['id'])
-    order.in_progress!
+    order.waiting!
 
-    logger.info 'Pedido Recebido'
     ack!
   end
 end

@@ -27,6 +27,7 @@ services:
       - DBUSER=postgres
       - DBPASS=password
       - CLOUDAMQP_URL=amqp://127.0.0.1:15672
+      - WEBHOOK_URL=https://webhook.site/76d77748-495c-43f9-b664-00c100bdf226
     volumes:
       - ./backend:/rails
     ports:

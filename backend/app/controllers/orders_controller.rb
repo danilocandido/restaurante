@@ -1,5 +1,5 @@
 class OrdersController < ApplicationController
-  before_action :set_order, only: %i[ show update destroy ]
+  before_action :set_order, only: %i[in_progress finished]
 
   # GET /orders
   def index
@@ -23,6 +23,22 @@ class OrdersController < ApplicationController
     else
       render json: @order.errors, status: :unprocessable_entity
     end
+  end
+
+  def in_progress
+    return head :not_modified if @order.in_progress?
+
+    @order.in_progress!
+    OrderNotifier.send(:kitchen, @order)
+    render json: @order, status: :accepted
+  end
+
+  def finished
+    return head :not_modified if @order.finished?
+
+    @order.finished!
+    OrderNotifier.send(:waiter, @order)
+    render json: @order, status: :accepted
   end
 
   # PATCH/PUT /orders/1

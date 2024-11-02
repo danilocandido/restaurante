@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
   resources :items
   scope :api do
-    resources :orders
+    resources :orders do
+      patch :in_progress, on: :member
+      patch :finished, on: :member
+    end
     resources :tables
     resources :products
   end
