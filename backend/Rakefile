@@ -1,6 +1,24 @@
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
+require 'sneakers/tasks'
 require_relative "config/application"
+
+namespace :rabbitmq do
+  desc 'setup routing'
+  task :setup do
+    require 'bunny'
+
+    attrs = { host: 'rabbitmq', vhost: '/', user: 'guest', pass: 'guest' }
+    connection ||= Bunny.new(attrs).tap(&:start)
+
+    channel = connection.create_channel
+    exchange = channel.topic('orders_exchange', auto_delete: true)
+
+    queue = channel.queue('order.received', durable: false)
+    queue.bind(exchange, routing_key: 'order.received')
+    connection.close
+  end
+end
 
 Rails.application.load_tasks

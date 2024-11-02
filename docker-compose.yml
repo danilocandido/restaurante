@@ -26,12 +26,30 @@ services:
       - DBHOST=database
       - DBUSER=postgres
       - DBPASS=password
+      - CLOUDAMQP_URL=amqp://127.0.0.1:15672
     volumes:
       - ./backend:/rails
     ports:
       - "3000:3000"
     depends_on:
       - database
+      - rabbitmq
+      - redis
+    networks:
+      - restaurante-network
+
+  rabbitmq:
+    image: rabbitmq:3.13-rc-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - restaurante-network
+
+  redis:
+    image: "redis:7-alpine"
+    ports:
+      - 6379
     networks:
       - restaurante-network
 
