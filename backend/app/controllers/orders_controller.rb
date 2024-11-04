@@ -30,7 +30,7 @@ class OrdersController < ApplicationController
 
     @order.in_progress!
     OrderNotifier.send(:kitchen, @order)
-    render json: @order, status: :accepted
+    render json: @order, status: :ok
   end
 
   def finished
@@ -38,7 +38,7 @@ class OrdersController < ApplicationController
 
     @order.finished!
     OrderNotifier.send(:waiter, @order)
-    render json: @order, status: :accepted
+    render json: @order, status: :ok
   end
 
   # PATCH/PUT /orders/1
