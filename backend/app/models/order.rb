@@ -1,17 +1,17 @@
 class Order < ApplicationRecord
-  after_create :stream_notification
-
   enum status: %i[received waiting in_progress finished completed]
 
   belongs_to :table
   has_many :items
 
   after_commit :order_received!, on: :create
+  after_commit :stream_notification, on: :create
 
   private
 
   def stream_notification
     message_data = {
+      id: id,
       status: self.status,
       table: self.table.number,
     }
