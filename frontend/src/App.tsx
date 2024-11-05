@@ -1,5 +1,7 @@
 import actionCable from 'actioncable';
 import { useEffect, useState } from 'react';
+import StartOrderButton from './StartOrderButton';
+import FinishOrderButton from './FinishOrderButton';
 
 interface OrderTypes {
   id: number;
@@ -11,7 +13,7 @@ const App = () => {
   const cableApp = actionCable.createConsumer('ws://127.0.0.1:3000/cable');
   const [channel, setChannel] = useState<null | actionCable.Channel>(null);
   const [tasks, setTasks] = useState<OrderTypes[]>([]);
-  const [startedOrders, setStartedOrders] = useState<OrderTypes[]>([]); // Estado para pedidos iniciados
+  const [startedOrders, setStartedOrders] = useState<OrderTypes[]>([]);
 
   useEffect(() => {
     const newChannel = cableApp.subscriptions.create(
@@ -32,24 +34,22 @@ const App = () => {
 
     // Função de limpeza
     return () => {
-      newChannel.unsubscribe(); // Desconecta o canal quando o componente é desmontado
+      newChannel.unsubscribe();
     };
-  }, []); // Mantém o array de dependências vazio
+  }, []);
 
   const handleStartOrder = () => {
     if (tasks.length > 0) {
-      const orderToStart = tasks[0]; // Pega o primeiro pedido da lista
-      setStartedOrders((prevStartedOrders) => [...prevStartedOrders, orderToStart]); // Adiciona o pedido à lista de pedidos iniciados
-      setTasks((prevTasks) => prevTasks.slice(1)); // Remove o primeiro pedido da lista de tarefas
+      const orderToStart = tasks[0];
+      setStartedOrders((prevStartedOrders) => [...prevStartedOrders, orderToStart]);
+      setTasks((prevTasks) => prevTasks.slice(1));
       console.log(`Iniciando pedido: ${orderToStart.id}`);
-      // Aqui você pode adicionar a lógica para iniciar o pedido
     }
   };
 
   const handleFinishOrder = (orderId: number) => {
     console.log(`Finalizando pedido: ${orderId}`);
-    setStartedOrders((prevStartedOrders) => prevStartedOrders.filter(order => order.id !== orderId)); // Remove o pedido finalizado da lista de pedidos iniciados
-    // Aqui você pode adicionar a lógica para finalizar o pedido
+    setStartedOrders((prevStartedOrders) => prevStartedOrders.filter(order => order.id !== orderId));
   };
 
   return (
@@ -69,17 +69,15 @@ const App = () => {
       {/* Coluna da direita */}
       <div style={{ flex: 1, padding: '20px' }}>
         <h1>Ações</h1>
-        <button onClick={handleStartOrder} style={{ marginRight: '10px' }}>
-          Iniciar Pedido
-        </button>
+        {tasks.length > 0 && (
+          <StartOrderButton orderId={tasks[0].id} onStartOrder={handleStartOrder} />
+        )}
         <h2>Pedidos Iniciados</h2>
         <ul>
           {startedOrders.map((order) => (
             <li key={order.id}>
               ID: {order.id}, Tabela: {order.table}, Status: {order.status}
-              <button onClick={() => handleFinishOrder(order.id)} style={{ marginLeft: '10px' }}>
-                Finalizar Pedido
-              </button>
+              <FinishOrderButton orderId={order.id} onFinish={handleFinishOrder} />
             </li>
           ))}
         </ul>

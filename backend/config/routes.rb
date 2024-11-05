@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   
   scope :api do
-    resources :items
-    resources :tables
+    #resources :items
+    #resources :tables
     resources :products
     resources :orders do
       patch :in_progress, on: :member
