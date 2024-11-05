@@ -1,9 +1,8 @@
 class OrdersController < ApplicationController
   before_action :set_order, only: %i[in_progress finished]
 
-  # GET /orders
   def index
-    @orders = Order.all
+    @orders = Order.most_recent
 
     render json: @orders
   end

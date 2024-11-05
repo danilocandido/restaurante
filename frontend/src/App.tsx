@@ -12,10 +12,25 @@ interface OrderTypes {
 const App = () => {
   const cableApp = actionCable.createConsumer('ws://127.0.0.1:3000/cable');
   const [channel, setChannel] = useState<null | actionCable.Channel>(null);
-  const [tasks, setTasks] = useState<OrderTypes[]>([]);
+  const [orders, setOrders] = useState<OrderTypes[]>([]);
   const [startedOrders, setStartedOrders] = useState<OrderTypes[]>([]);
 
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:3000/api/orders');
+        const data = await response.json();
+        // Filtra pedidos com status 'received' para tasks e outros para startedOrders
+        setOrders(data.filter((order: OrderTypes) => order.status === 'waiting'));
+        setStartedOrders(data.filter((order: OrderTypes) => order.status === 'in_progress'));
+      } catch (error) {
+        console.error('Erro ao carregar pedidos:', error);
+      }
+    };
+
+    fetchOrders();
+
+    // Subscrição ao canal de pedidos com Action Cable
     const newChannel = cableApp.subscriptions.create(
       {
         channel: 'OrdersChannel',
@@ -25,7 +40,7 @@ const App = () => {
         disconnected: () => console.log('disconnected'),
         received: (message: OrderTypes) => {
           console.log('mensagem recebida :D');
-          setTasks((prevTasks) => [...prevTasks, message]);
+          setOrders((currentOrders) => [...currentOrders, message]);
         },
       },
     );
@@ -39,10 +54,10 @@ const App = () => {
   }, []);
 
   const handleStartOrder = () => {
-    if (tasks.length > 0) {
-      const orderToStart = tasks[0];
+    if (orders.length > 0) {
+      const orderToStart = orders[0];
       setStartedOrders((prevStartedOrders) => [...prevStartedOrders, orderToStart]);
-      setTasks((prevTasks) => prevTasks.slice(1));
+      setOrders((currentOrders) => currentOrders.slice(1));
       console.log(`Iniciando pedido: ${orderToStart.id}`);
     }
   };
@@ -58,9 +73,9 @@ const App = () => {
       <div style={{ flex: 1, padding: '20px', borderRight: '1px solid #ccc' }}>
         <h1>Lista de Tarefas</h1>
         <ul>
-          {tasks.map((task, index) => (
+          {orders.map((order, index) => (
             <li key={index}>
-              id: {task.id}, Tabela: {task.table}, Status: {task.status}
+              id: {order.id}, Tabela: {order.table}, Status: {order.status}
             </li>
           ))}
         </ul>
@@ -69,8 +84,8 @@ const App = () => {
       {/* Coluna da direita */}
       <div style={{ flex: 1, padding: '20px' }}>
         <h1>Ações</h1>
-        {tasks.length > 0 && (
-          <StartOrderButton orderId={tasks[0].id} onStartOrder={handleStartOrder} />
+        {orders.length > 0 && (
+          <StartOrderButton orderId={orders[0].id} onStartOrder={handleStartOrder} />
         )}
         <h2>Pedidos Iniciados</h2>
         <ul>

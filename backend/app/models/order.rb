@@ -7,6 +7,10 @@ class Order < ApplicationRecord
   after_commit :order_received!, on: :create
   after_commit :stream_notification, on: :create
 
+  def self.most_recent
+    where(status: %i[waiting in_progress])
+  end
+
   private
 
   def stream_notification
