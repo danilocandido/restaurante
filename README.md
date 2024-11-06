@@ -12,6 +12,7 @@ The setups steps expect following tools installed on the system.
 - Rails API only [7.2.1](https://github.com/rails/rails)
 - Docker
 - Docker Compose
+- Postman
 
 ##### 1. Check out do repositório
 
@@ -94,3 +95,10 @@ Para executar todos os testes rode o comando abaixo:
 ```
 docker compose run api bundle exec rspec
 ```
+
+### Swagger
+- [Swagger](https://github.com/danilocandido/restaurante/blob/main/swagger_openapi.yaml)
+
+### Postman
+Para criar alguns pedidos é possível cria usar a requisição `POST orders/`, após feita a requisição o pedido irá parecer automáticamente no frontend
+- [Postman](https://github.com/danilocandido/restaurante/blob/main/restaurante.postman_collection.json)
