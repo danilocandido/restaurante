@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: Orders API
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:3000/api
+
+paths:
+  /orders:
+    get:
+      summary: Lista todos os pedidos
+      operationId: listOrders
+      tags:
+        - Orders
+      responses:
+        "200":
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      summary: Cria um novo pedido
+      operationId: createOrder
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewOrder'
+      responses:
+        "201":
+          description: Pedido criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        "422":
+          description: Erro de validação
+
+  /orders/{id}/in_progress:
+    patch:
+      summary: Atualiza o status do pedido para "in_progress"
+      operationId: startOrder
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Pedido atualizado para "in_progress"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        "304":
+          description: Não modificado
+
+  /orders/{id}/finished:
+    patch:
+      summary: Atualiza o status do pedido para "finished"
+      operationId: finishOrder
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Pedido atualizado para "finished"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        "304":
+          description: Não modificado
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        status:
+          type: string
+          enum: [received, waiting, in_progress, finished, completed]
+          example: waiting
+        table:
+          type: integer
+          example: 11
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+
+    NewOrder:
+      type: object
+      properties:
+        table_id:
+          type: integer
+          example: 11
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              product_id:
+                type: integer
+                example: 1
+              amount:
+                type: integer
+                example: 5
+      required:
+        - table_id
+        - items
+
+    Item:
+      type: object
+      properties:
+        product_id:
+          type: integer
+          example: 1
+        amount:
+          type: integer
+          example: 5
