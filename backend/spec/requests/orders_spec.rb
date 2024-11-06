@@ -20,6 +20,11 @@ RSpec.describe "/orders", type: :request do
     }
   }
 
+  before do
+    allow(OrderPublisher).to receive(:publish).and_return(true)
+    allow(OrderNotifier).to receive(:send).and_return(true)
+  end
+
   let(:invalid_attributes) {
     skip("Add a hash of attributes invalid for your model")
   }
@@ -32,29 +37,27 @@ RSpec.describe "/orders", type: :request do
     {}
   }
 
-  describe "GET /index" do
-    it "renders a successful response" do
-      Order.create! valid_attributes
-      get orders_url, headers: valid_headers, as: :json
-      expect(response).to be_successful
-    end
+  let(:table) { Table.find_or_create_by!(number: 11) }
+
+  before do
+    Order.create(table: table)
   end
 
-  describe "GET /show" do
+  describe "GET /index" do
     it "renders a successful response" do
-      order = Order.create! valid_attributes
-      get order_url(order), as: :json
+      get orders_url, headers: valid_headers, as: :json
       expect(response).to be_successful
     end
   end
 
   describe "POST /create" do
     context "with valid parameters" do
-      it "creates a new Order" do
+      it "creates a new Order and new Items" do
         expect {
           post orders_url,
                params: { order: valid_attributes }, headers: valid_headers, as: :json
-        }.to change(Order, :count).by(1)
+        }.to change { Order.count }.by(1)
+        .and change { Item.count }.by(2)
       end
 
       it "renders a JSON response with the new order" do
@@ -64,64 +67,27 @@ RSpec.describe "/orders", type: :request do
         expect(response.content_type).to match(a_string_including("application/json"))
       end
     end
-
-    context "with invalid parameters" do
-      it "does not create a new Order" do
-        expect {
-          post orders_url,
-               params: { order: invalid_attributes }, as: :json
-        }.to change(Order, :count).by(0)
-      end
-
-      it "renders a JSON response with errors for the new order" do
-        post orders_url,
-             params: { order: invalid_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(a_string_including("application/json"))
-      end
-    end
   end
 
-  describe "PATCH /update" do
+  describe "PATCH /in_progress" do
     context "with valid parameters" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
+      let(:order) { Order.last }
 
       it "updates the requested order" do
-        order = Order.create! valid_attributes
-        patch order_url(order),
-              params: { order: new_attributes }, headers: valid_headers, as: :json
-        order.reload
-        skip("Add assertions for updated state")
-      end
-
-      it "renders a JSON response with the order" do
-        order = Order.create! valid_attributes
-        patch order_url(order),
-              params: { order: new_attributes }, headers: valid_headers, as: :json
+        patch in_progress_order_url(order), headers: valid_headers, as: :json
         expect(response).to have_http_status(:ok)
-        expect(response.content_type).to match(a_string_including("application/json"))
-      end
-    end
-
-    context "with invalid parameters" do
-      it "renders a JSON response with errors for the order" do
-        order = Order.create! valid_attributes
-        patch order_url(order),
-              params: { order: invalid_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(a_string_including("application/json"))
       end
     end
   end
 
-  describe "DELETE /destroy" do
-    it "destroys the requested order" do
-      order = Order.create! valid_attributes
-      expect {
-        delete order_url(order), headers: valid_headers, as: :json
-      }.to change(Order, :count).by(-1)
+  describe "PATCH /finished" do
+    context "with valid parameters" do
+      let(:order) { Order.last }
+
+      it "updates the requested order" do
+        patch finished_order_url(order), headers: valid_headers, as: :json
+        expect(response).to have_http_status(:ok)
+      end
     end
   end
 end
