@@ -4,6 +4,7 @@ RSpec.describe "/orders", type: :request do
   let(:table) { Table.find_or_create_by!(number: 1) }
   let(:peixada) { Product.find_or_create_by!(name: 'Peixada Cearence', price: 100.00, category: :prato) }
   let(:suco) { Product.find_or_create_by!(name: 'Suco de Caju', price: 100.00, category: :bebida) }
+  let(:table) { Table.find_or_create_by!(number: 11) }
   let(:valid_attributes) {
     {
       table_id: table.id,
@@ -25,27 +26,13 @@ RSpec.describe "/orders", type: :request do
     allow(OrderNotifier).to receive(:send).and_return(true)
   end
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
-
-  # This should return the minimal set of values that should be in the headers
-  # in order to pass any filters (e.g. authentication) defined in
-  # OrdersController, or in your router and rack
-  # middleware. Be sure to keep this updated too.
-  let(:valid_headers) {
-    {}
-  }
-
-  let(:table) { Table.find_or_create_by!(number: 11) }
-
   before do
     Order.create(table: table)
   end
 
   describe "GET /index" do
     it "renders a successful response" do
-      get orders_url, headers: valid_headers, as: :json
+      get orders_url, as: :json
       expect(response).to be_successful
     end
   end
@@ -55,14 +42,14 @@ RSpec.describe "/orders", type: :request do
       it "creates a new Order and new Items" do
         expect {
           post orders_url,
-               params: { order: valid_attributes }, headers: valid_headers, as: :json
+               params: { order: valid_attributes }, as: :json
         }.to change { Order.count }.by(1)
         .and change { Item.count }.by(2)
       end
 
       it "renders a JSON response with the new order" do
         post orders_url,
-             params: { order: valid_attributes }, headers: valid_headers, as: :json
+             params: { order: valid_attributes }, as: :json
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
@@ -74,7 +61,7 @@ RSpec.describe "/orders", type: :request do
       let(:order) { Order.last }
 
       it "updates the requested order" do
-        patch in_progress_order_url(order), headers: valid_headers, as: :json
+        patch in_progress_order_url(order), as: :json
         expect(response).to have_http_status(:ok)
       end
     end
@@ -85,7 +72,7 @@ RSpec.describe "/orders", type: :request do
       let(:order) { Order.last }
 
       it "updates the requested order" do
-        patch finished_order_url(order), headers: valid_headers, as: :json
+        patch finished_order_url(order), as: :json
         expect(response).to have_http_status(:ok)
       end
     end
