@@ -27,7 +27,7 @@ services:
       - DBUSER=postgres
       - DBPASS=password
       - CLOUDAMQP_URL=amqp://127.0.0.1:15672
-      - WEBHOOK_URL=https://webhook.site/76d77748-495c-43f9-b664-00c100bdf226
+      - WEBHOOK_URL=https://webhook.site/KEY
       - REDIS_URL=redis://redis:6379/1
       - ALLOW_ORIGINS=http://localhost:3001
       - RAILS_ENV=development
