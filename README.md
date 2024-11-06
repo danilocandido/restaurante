@@ -20,8 +20,8 @@ git clone git@github.com:danilocandido/restaurante.git
 ```
 
 ##### 2. Variáveis de ambiente
-As variáveis de ambiente estão dentro do docker-compose.yml no servido API. Para simular um webhook é preciso abrir o site https://webhook.site/76d77748-495c-43f9-b664-00c100bdf226
-e no menu procurar o link `COPY` e copiar a URL substituindo a variáve `WEBHOOK_URL` pelo link copiado
+As variáveis de ambiente estão dentro do docker-compose.yml no servido API. Para simular um webhook é preciso abrir o site https://webhook.site
+e no menu procurar o link `COPY` (lado superior direito do site) e copiar a URL substituindo a variável `WEBHOOK_URL` pelo link copiado. Segue um exemplo de como deve ficar abaixo
 
 WEBHOOK_URL=https://webhook.site/76d77748-495c-43f9-b664-00c100bdf226
 
@@ -69,7 +69,7 @@ npm start
 
 ### Rabbimq
 
-A escolha adoção do tópico exchange foi devido a centralizar o tópico com a possibilidade de criar várias rotas. Sendo a central de pedidos e as rotas os destinos que partem dessa central de pedidos. Outras possibilidades seriam comunicação ponto a ponto ou broadcast
+A escolha adoção do tópico exchange foi devido a centralizar o tópico com a possibilidade de criar várias rotas. Sendo a central de pedidos e as rotas os destinos que partem dessa central de pedidos. Outras possibilidades seriam comunicação ponto a ponto ou broadcast  
             ┌───────────────────────────┐
             │       orders_exchange     │
             │           (Tópico)        │
