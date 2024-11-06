@@ -70,23 +70,25 @@ npm start
 ### Rabbimq
 
 A escolha adoção do tópico exchange foi devido a centralizar o tópico com a possibilidade de criar várias rotas. Sendo a central de pedidos e as rotas os destinos que partem dessa central de pedidos. Outras possibilidades seriam comunicação ponto a ponto ou broadcast  
-            ┌───────────────────────────┐  
-            │       orders_exchange     │  
-            │           (Tópico)        │  
-            └────────────┬──────────────┘  
-                         │  
-                         │  
-                         ▼  
-               ┌─────────────────────┐  
-               │    order.received   │  
-               │        Fila         │  
-               └─────────────────────┘  
+
+                    ┌───────────────────────────────┐
+                    │        orders_exchange        │
+                    │           (Tópico)            │
+                    └───────────────┬───────────────┘
+                                    │
+                                    │
+                                    ▼
+                           ┌─────────────────────┐
+                           │    order.received   │
+                           │        (Fila)       │
+                           └─────────────────────┘
+
   
-Publisher: OrderPublisher.rb
-Consumidor: KitchenWorker.rb
+Publisher: OrderPublisher.rb  
+Consumidor: KitchenWorker.rb  
 
 ### Testes
-Foi implementado dois tipos de testes, testes unitários nos modelos e testes de integração para o contexto da API.
+Foi implementado dois tipos de testes, `testes unitários` nos modelos e `testes de integração` para o contexto das requisições da API.
 Para executar todos os testes rode o comando abaixo:
 
 ```
