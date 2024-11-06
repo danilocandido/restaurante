@@ -1,5 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Table, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject { Table.find_or_create_by!(number: 11) }
+
+  it { is_expected.to be_valid }
 end

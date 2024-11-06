@@ -17,7 +17,7 @@ class Order < ApplicationRecord
     message_data = {
       id: id,
       status: self.status,
-      table: self.table.number,
+      table: self.table.number
     }
 
     ActionCable.server.broadcast("orders_channel", message_data)
