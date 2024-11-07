@@ -8,7 +8,9 @@ class Order < ApplicationRecord
   after_commit :stream_notification, on: :create
 
   def self.most_recent
-    where(status: %i[waiting in_progress])
+    Order.select('orders.id, orders.status, orders.table_id, tables.number AS table_number')
+     .joins(:table)
+     .where(status: %i[waiting in_progress])
   end
 
   private
@@ -16,8 +18,8 @@ class Order < ApplicationRecord
   def stream_notification
     message_data = {
       id: id,
-      status: self.status,
-      table: self.table.number
+      status: status,
+      table: table.number
     }
 
     ActionCable.server.broadcast("orders_channel", message_data)

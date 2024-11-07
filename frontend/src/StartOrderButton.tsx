@@ -15,10 +15,10 @@ const StartOrderButton: React.FC<StartOrderButtonProps> = ({ orderId, onStartOrd
         onStartOrder();
         console.log(`Pedido ${orderId} iniciado com sucesso`);
       } else {
-        console.error(`Erro ao iniciar o pedido ${orderId}`);
+        console.error(`Erro: pedido ${orderId}`);
       }
     } catch (error) {
-      console.error(`Erro de rede ao iniciar o pedido ${orderId}:`, error);
+      console.error(`Erro: ${error}:`);
     }
   };
 

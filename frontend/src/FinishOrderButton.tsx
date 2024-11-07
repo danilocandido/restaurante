@@ -19,10 +19,10 @@ const FinishOrderButton: React.FC<FinishOrderButtonProps> = ({ orderId, onFinish
         console.log(`Pedido ${orderId} finalizado com sucesso.`);
         onFinish(orderId);
       } else {
-        console.error(`Erro ao finalizar o pedido ${orderId}`);
+        console.error(`Erro: pedido ${orderId}`);
       }
     } catch (error) {
-      console.error(`Erro na requisição: ${error}`);
+      console.error(`Erro: ${error}`);
     }
   };
 

@@ -6,7 +6,7 @@ import FinishOrderButton from './FinishOrderButton';
 interface OrderTypes {
   id: number;
   status: string;
-  table: number;
+  table_number: number;
 }
 
 const App = () => {
@@ -21,6 +21,7 @@ const App = () => {
         const response = await fetch('http://127.0.0.1:3000/api/orders');
         const data = await response.json();
         // Filtra pedidos com status 'received' para tasks e outros para startedOrders
+        console.log(data);
         setOrders(data.filter((order: OrderTypes) => order.status === 'waiting'));
         setStartedOrders(data.filter((order: OrderTypes) => order.status === 'in_progress'));
       } catch (error) {
@@ -47,7 +48,6 @@ const App = () => {
 
     setChannel(newChannel);
 
-    // Função de limpeza
     return () => {
       newChannel.unsubscribe();
     };
@@ -56,7 +56,7 @@ const App = () => {
   const handleStartOrder = () => {
     if (orders.length > 0) {
       const orderToStart = orders[0];
-      setStartedOrders((prevStartedOrders) => [...prevStartedOrders, orderToStart]);
+      setStartedOrders((currentStartedOrders) => [...currentStartedOrders, orderToStart]);
       setOrders((currentOrders) => currentOrders.slice(1));
       console.log(`Iniciando pedido: ${orderToStart.id}`);
     }
@@ -64,24 +64,22 @@ const App = () => {
 
   const handleFinishOrder = (orderId: number) => {
     console.log(`Finalizando pedido: ${orderId}`);
-    setStartedOrders((prevStartedOrders) => prevStartedOrders.filter(order => order.id !== orderId));
+    setStartedOrders((currentStartedOrders) => currentStartedOrders.filter(order => order.id !== orderId));
   };
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
-      {/* Coluna da esquerda */}
       <div style={{ flex: 1, padding: '20px', borderRight: '1px solid #ccc' }}>
         <h1>Lista de Tarefas</h1>
         <ul>
           {orders.map((order, index) => (
             <li key={index}>
-              id: {order.id}, Tabela: {order.table}, Status: {order.status}
+              id: {order.id}, Mesa: {order.table_number}, Status: {order.status}
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Coluna da direita */}
       <div style={{ flex: 1, padding: '20px' }}>
         <h1>Ações</h1>
         {orders.length > 0 && (
@@ -91,7 +89,7 @@ const App = () => {
         <ul>
           {startedOrders.map((order) => (
             <li key={order.id}>
-              ID: {order.id}, Tabela: {order.table}, Status: {order.status}
+              ID: {order.id}, Mesa: {order.table_number}, Status: {order.status}
               <FinishOrderButton orderId={order.id} onFinish={handleFinishOrder} />
             </li>
           ))}
